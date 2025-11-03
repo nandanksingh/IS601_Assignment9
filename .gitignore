@@ -1,0 +1,48 @@
+# ----------------------------------------------------------
+# Author: Nandan Kumar
+# Date: 10/27/2025
+# Assignment-8: FastAPI Calculator
+# File: .gitignore
+# ----------------------------------------------------------
+# Description:
+# Ignore unnecessary files and folders from being committed
+# to GitHub — including Python caches, virtual environments,
+# test artifacts, and Docker/coverage outputs.
+# ----------------------------------------------------------
+
+# Python virtual environment
+venv/
+.env
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Test coverage and cache files
+.coverage
+htmlcov/
+.pytest_cache/
+
+# macOS system files
+.DS_Store
+
+# VSCode and IDE settings
+.vscode/
+.idea/
+
+# Docker and build artifacts
+*.log
+*.pid
+*.tar
+*.db
+*.sqlite3
+
+# Trivy scan reports
+.trivy-results.json
+.trivyignore
+
+# Node / Playwright cache 
+node_modules/
+playwright-report/
