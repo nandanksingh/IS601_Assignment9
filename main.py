@@ -1,13 +1,14 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment-8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: main.py
 # ----------------------------------------------------------
 # Description:
-# Main FastAPI app that provides REST endpoints for
-# addition, subtraction, multiplication, and division.
-# Includes custom exception handling, logging, and health check.
+# Main FastAPI app integrating REST endpoints for
+# arithmetic operations (addition, subtraction,
+# multiplication, division) and PostgreSQL database setup.
+# Includes logging, error handling, and health monitoring.
 # ----------------------------------------------------------
 
 from fastapi import FastAPI, HTTPException, Request
@@ -27,7 +28,10 @@ logger = logging.getLogger(__name__)
 # ----------------------------------------------------------
 # Initialize FastAPI app and Jinja2 templates
 # ----------------------------------------------------------
-app = FastAPI(title="FastAPI Calculator", description="A simple calculator API.")
+app = FastAPI(
+    title="FastAPI Calculator with PostgreSQL",
+    description="Assignment-9: Demonstrating SQL operations with FastAPI + pgAdmin + PostgreSQL",
+)
 templates = Jinja2Templates(directory="templates")
 
 
@@ -60,7 +64,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 # ----------------------------------------------------------
-# Routes for arithmetic operations
+# Arithmetic Routes (REST API)
 # ----------------------------------------------------------
 @app.post("/add")
 async def add_numbers(data: OperationRequest):
@@ -118,13 +122,16 @@ async def divide_numbers(data: OperationRequest):
 # ----------------------------------------------------------
 @app.get("/health")
 async def health_check():
-    """Health check endpoint for CI/CD and uptime monitoring."""
+    """Health check endpoint for CI/CD and container monitoring."""
     logger.info("Health check ping received.")
-    return {"status": "ok", "message": "FastAPI Calculator is running smoothly."}
+    return {
+        "status": "ok",
+        "message": "FastAPI + PostgreSQL service is running successfully."
+    }
 
 
 # ----------------------------------------------------------
-# Root Route (Optional HTML view)
+# Root Route (HTML Template)
 # ----------------------------------------------------------
 @app.get("/")
 async def home(request: Request):
@@ -138,5 +145,5 @@ async def home(request: Request):
 if __name__ == "__main__":
     import uvicorn
 
-    logger.info("Starting FastAPI Calculator App...")
+    logger.info("Starting FastAPI + PostgreSQL Integration App...")
     uvicorn.run(app, host="0.0.0.0", port=8000)

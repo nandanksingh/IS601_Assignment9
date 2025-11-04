@@ -1,13 +1,17 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment 8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: app/operations.py
 # ----------------------------------------------------------
 # Description:
 # Defines the core arithmetic functions for the FastAPI Calculator app.
 # Each operation validates numeric inputs, logs execution details,
 # and ensures consistent error handling for invalid data or operations.
+#
+# In this assignment, these functions act as the logical layer
+# that can later interact with PostgreSQL for data storage and
+# query testing using pgAdmin through Docker Compose.
 # ----------------------------------------------------------
 
 from typing import Union
@@ -20,6 +24,7 @@ Number = Union[int, float]
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 # ----------------------------------------------------------
 # Helper: Validate numeric input
 # ----------------------------------------------------------
@@ -29,6 +34,7 @@ def _validate_numbers(a: Number, b: Number) -> None:
         logger.error(f"Invalid operands: a={a}, b={b}")
         raise TypeError("Both operands must be numbers.")
     return None
+
 
 # ----------------------------------------------------------
 # Add two numbers
@@ -40,6 +46,7 @@ def add(a: Number, b: Number) -> Number:
     logger.info(f"Addition performed: {a} + {b} = {result}")
     return result
 
+
 # ----------------------------------------------------------
 # Subtract two numbers
 # ----------------------------------------------------------
@@ -50,6 +57,7 @@ def subtract(a: Number, b: Number) -> Number:
     logger.info(f"Subtraction performed: {a} - {b} = {result}")
     return result
 
+
 # ----------------------------------------------------------
 # Multiply two numbers
 # ----------------------------------------------------------
@@ -59,6 +67,7 @@ def multiply(a: Number, b: Number) -> Number:
     result = a * b
     logger.info(f"Multiplication performed: {a} * {b} = {result}")
     return result
+
 
 # ----------------------------------------------------------
 # Divide two numbers

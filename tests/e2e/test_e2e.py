@@ -1,13 +1,16 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment 8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: tests/e2e/test_e2e.py
 # ----------------------------------------------------------
 # Description:
 # End-to-End (E2E) tests for the FastAPI Calculator web app.
-# These tests use Playwright to simulate user interactions
-# and verify that frontend and backend integration works correctly.
+# These tests use Playwright to simulate real user interactions
+# with the browser and verify frontend–backend integration.
+# In this assignment, E2E testing complements PostgreSQL setup
+# in Docker Compose, ensuring that the app remains functional
+# while database and API layers operate together.
 # ----------------------------------------------------------
 
 import pytest

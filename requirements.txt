@@ -1,14 +1,14 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 11/02/2025
-# Assignment-8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: FastAPI + PostgreSQL + pgAdmin (Raw SQL)
 # File: requirements.txt
 # ----------------------------------------------------------
 # Description:
-# Secure and compatible dependency list for FastAPI Calculator.
-# Updated after Trivy scan — patched minor vulnerabilities in
-# Jinja2, requests, and urllib3 while maintaining FastAPI
-# and Starlette compatibility.
+# Secure and compatible dependency list for the FastAPI
+# Calculator project extended with PostgreSQL integration.
+# Includes ORM, database driver, and environment variable
+# management for Dockerized pgAdmin workflows.
 # ----------------------------------------------------------
 
 # ----------------------------------------------------------
@@ -17,7 +17,7 @@
 fastapi==0.115.4
 uvicorn==0.32.0
 starlette==0.41.2
-Jinja2==3.1.6          # updated from 3.1.4 → fixes CVE-2024-C001
+Jinja2==3.1.6
 MarkupSafe==3.0.2
 
 # ----------------------------------------------------------
@@ -29,6 +29,14 @@ annotated-types==0.7.0
 typing-extensions==4.12.2
 
 # ----------------------------------------------------------
+# Database & ORM Integration
+# ----------------------------------------------------------
+psycopg2-binary==2.9.9       # PostgreSQL driver
+SQLAlchemy==2.0.36            # ORM for DB interaction
+alembic==1.13.2               # DB migrations (optional)
+python-dotenv==1.0.1          # Load .env configs safely
+
+# ----------------------------------------------------------
 # HTTP and Networking
 # ----------------------------------------------------------
 httpx==0.27.2
@@ -38,9 +46,9 @@ sniffio==1.3.1
 idna==3.10
 certifi==2024.8.30
 charset-normalizer==3.4.0
-urllib3==2.5.0          # updated from 2.2.3 → fixes CVE-2025-C003
-requests==2.32.4        # updated from 2.32.3 → fixes CVE-2025-C002
-h11==0.14.0             # pinned for httpcore 1.0.6 compatibility
+urllib3==2.5.0
+requests==2.32.4
+h11==0.14.0
 
 # ----------------------------------------------------------
 # Testing and Coverage

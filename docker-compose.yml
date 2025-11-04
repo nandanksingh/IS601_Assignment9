@@ -1,43 +1,93 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment-8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: docker-compose.yml
 # ----------------------------------------------------------
 # Description:
-# Docker Compose configuration for running the FastAPI Calculator app.
-# Simplifies container management with one command — builds the image,
-# runs FastAPI with live reload, maps host ports, and checks container health.
+# Multi-container setup for FastAPI + PostgreSQL + pgAdmin.
+# Provides an isolated environment for raw SQL operations
+# using Docker networking. Version-tagged for easy tracking.
 # ----------------------------------------------------------
 
-version: "3.9"
+# ✅ Compose project name for clarity in Docker Desktop
+name: module9_sql_pgadmin
 
 services:
-  fastapi-calculator:
-    container_name: fastapi-calculator
+  # --------------------------------------------------------
+  # 1: FastAPI Application (Web)
+  # --------------------------------------------------------
+  web:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nandanksingh/module8_fastapi_calculator:latest
-
+    container_name: fastapi_app
+    image: nandanksingh/module9_sql_pgadmin:pgSQL_1   # Versioned image tag for tracking
     ports:
-      - "8000:8000"                       # Map host port → container port
-
-    environment:
-      PYTHONUNBUFFERED: "1"               # Show logs in real-time
-      PYTHONDONTWRITEBYTECODE: "1"        # Prevent .pyc generation
-
+      - "8000:8000"                                   # Host → container
     volumes:
-      - .:/app                            # Mount current dir for hot reload (dev mode)
+      - .:/app                                        # Mount current directory
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/fastapi_db
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+    networks:
+      - app-network
 
-    command: >
-      uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-
+  # --------------------------------------------------------
+  # 2: PostgreSQL Database
+  # --------------------------------------------------------
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fastapi_db
+    ports:
+      - "5432:5432"                                   # Accessible from localhost:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 5s                    # Small delay to allow startup before healthcheck
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
 
-    restart: unless-stopped               # Auto-restart unless manually stopped
+  # --------------------------------------------------------
+  # 3: pgAdmin Web Interface
+  # --------------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"                                     # Access at localhost:5050
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+# ----------------------------------------------------------
+# Volumes: Persistent Data Storage
+# ----------------------------------------------------------
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+# ----------------------------------------------------------
+# Network: Shared bridge between containers
+# ----------------------------------------------------------
+networks:
+  app-network:
+    driver: bridge

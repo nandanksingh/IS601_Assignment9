@@ -1,41 +1,34 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment-8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: Dockerfile
 # ----------------------------------------------------------
 # Description:
-# Production-grade Dockerfile for FastAPI Calculator.
-# Optimized for CI/CD pipelines (GitHub Actions + Trivy + Playwright).
+# Production-grade Dockerfile for FastAPI + PostgreSQL integration.
+# Optimized for Docker Compose and CI/CD pipelines.
 # ----------------------------------------------------------
 
 FROM python:3.12-slim
 
+# ----------------------------------------------------------
 # Environment configuration
+# ----------------------------------------------------------
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/home/appuser/.local/bin:$PATH"
 
-# Set working directory
 WORKDIR /app
 
 # ----------------------------------------------------------
-# Install system dependencies
-# Includes build tools, curl (for healthcheck), and minimal fonts for Playwright
+# Install minimal system dependencies
+# Includes curl (for healthcheck) and libpq for psycopg2
 # ----------------------------------------------------------
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
-        curl \
-        libnss3 \
-        fonts-liberation \
-        libxkbcommon0 \
-        libasound2 \
-        libxss1 \
-        libatk1.0-0 \
-        libgtk-3-0 \
-        libdrm2 \
-        libgbm1 && \
+        libpq-dev \
+        curl && \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------
@@ -44,26 +37,25 @@ RUN apt-get update && \
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 # ----------------------------------------------------------
-# Copy dependency list first (for better build caching)
+# Install Python dependencies
 # ----------------------------------------------------------
-COPY requirements.txt ./
-
+COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # ----------------------------------------------------------
-# Copy the rest of the application code
+# Copy application code
 # ----------------------------------------------------------
 COPY . .
 
 # ----------------------------------------------------------
-# Set permissions
+# Set ownership and switch user
 # ----------------------------------------------------------
 RUN chown -R appuser:appgroup /app
 USER appuser
 
 # ----------------------------------------------------------
-# Expose app port and add health check
+# Expose port and add healthcheck
 # ----------------------------------------------------------
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \

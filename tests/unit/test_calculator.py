@@ -1,13 +1,15 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment 8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: tests/unit/test_calculator.py
 # ----------------------------------------------------------
 # Description:
 # Unit tests for arithmetic functions in app/operations.py.
-# Each test validates correct results for valid inputs and
-# ensures proper error handling for invalid or zero division.
+# Validates core calculator logic used in the FastAPI app,
+# ensuring correct math operations and proper error handling.
+# These tests verify correctness before integrating results
+# into the PostgreSQL database in Assignment-9.
 # ----------------------------------------------------------
 
 import pytest

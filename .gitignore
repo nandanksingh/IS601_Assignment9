@@ -1,13 +1,13 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment-8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: .gitignore
 # ----------------------------------------------------------
 # Description:
 # Ignore unnecessary files and folders from being committed
 # to GitHub — including Python caches, virtual environments,
-# test artifacts, and Docker/coverage outputs.
+# test artifacts, Docker/pgAdmin/PostgreSQL data, and coverage outputs.
 # ----------------------------------------------------------
 
 # Python virtual environment
@@ -38,6 +38,12 @@ htmlcov/
 *.tar
 *.db
 *.sqlite3
+docker-compose.override.yml
+*.local.yml
+
+# PostgreSQL and pgAdmin volumes
+postgres_data/
+pgadmin_data/
 
 # Trivy scan reports
 .trivy-results.json

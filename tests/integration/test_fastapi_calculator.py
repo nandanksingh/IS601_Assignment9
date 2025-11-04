@@ -1,16 +1,17 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment 8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: tests/integration/test_fastapi_calculator.py
 # ----------------------------------------------------------
 # Description:
 # Integration tests for FastAPI Calculator endpoints.
-# These tests use FastAPI's TestClient to verify that
-# API routes (/add, /subtract, /multiply, /divide)
-# return correct JSON responses and proper error messages.
-# Additional coverage tests ensure that all exception
-# handlers and the __main__ block are fully tested.
+# These tests verify API routes (/add, /subtract, /multiply, /divide)
+# return correct JSON responses and handle invalid inputs gracefully.
+#
+# In this assignment, these routes simulate the API layer that could
+# later be connected to a PostgreSQL database (via Docker Compose)
+# for logging and relational data operations.
 # ----------------------------------------------------------
 
 import pytest
@@ -95,7 +96,7 @@ def test_invalid_type_triggers_typeerror(client, endpoint, payload):
 
 
 # ----------------------------------------------------------
-# Coverage Tests
+# Health Check Endpoint
 # ----------------------------------------------------------
 def test_health_endpoint(client):
     """Ensure /health endpoint responds correctly."""
@@ -106,6 +107,9 @@ def test_health_endpoint(client):
     assert "FastAPI Calculator" in data["message"]
 
 
+# ----------------------------------------------------------
+# Coverage Tests
+# ----------------------------------------------------------
 def test_generic_add_error_handling(monkeypatch, client):
     """Force add() to raise an exception to cover the /add route error block."""
     def mock_add(a, b):
@@ -121,54 +125,37 @@ def test_generic_add_error_handling(monkeypatch, client):
     assert "Mocked addition failure" in response.text
 
 
-# ----------------------------------------------------------
-# Coverage Helper: Validation Exception Handler
-# ----------------------------------------------------------
 def test_request_validation_error_handler():
     """Manually trigger async validation_exception_handler in main.py."""
     import main
 
-    # Create a mock validation error
     err = RequestValidationError([
         {"loc": ["body", "a"], "msg": "bad input", "type": "value_error"}
     ])
 
-    # Run the async handler properly using asyncio.run
     response = asyncio.run(main.validation_exception_handler(None, err))
-
-    # Validate correct response type and message
     assert response.status_code == 400
     body = response.body.decode()
     assert "Invalid or missing numeric input" in body
     assert "error" in body
 
 
-# ----------------------------------------------------------
-# Coverage Helper: run main block
-# ----------------------------------------------------------
 def test_main_entrypoint(monkeypatch):
     """Ensure __main__ block in main.py is covered without running uvicorn."""
     import sys
     import main
     import importlib
 
-    # Mock uvicorn.run so it doesn’t actually start a server
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: None)
-
-    # Temporarily simulate running as a script
     sys.modules["__main__"] = main
     try:
         if hasattr(main, "__name__"):
             main.__name__ = "__main__"
         importlib.reload(main)
     finally:
-        # Restore __main__ safely
         sys.modules["__main__"].__name__ = "main"
 
 
-# ----------------------------------------------------------
-# Coverage Tests for missed branches
-# ----------------------------------------------------------
 def test_global_exception_handler():
     """Trigger the global_exception_handler manually."""
     import main
@@ -187,13 +174,11 @@ def test_subtract_and_multiply_error_blocks(monkeypatch, client):
     """Force /subtract and /multiply to raise errors to hit exception blocks."""
     import main
 
-    # Force subtraction failure
     monkeypatch.setattr(main, "subtract", lambda a, b: (_ for _ in ()).throw(Exception("Subtraction fail")))
     res1 = client.post("/subtract", json={"a": 5, "b": 3})
     assert res1.status_code == 400
     assert "Subtraction fail" in res1.text
 
-    # Force multiplication failure
     monkeypatch.setattr(main, "multiply", lambda a, b: (_ for _ in ()).throw(Exception("Multiply fail")))
     res2 = client.post("/multiply", json={"a": 2, "b": 2})
     assert res2.status_code == 400
@@ -206,6 +191,7 @@ def test_home_endpoint(client):
     assert res.status_code == 200
     assert "text/html" in res.headers.get("content-type", "")
 
+
 def test_divide_unexpected_exception(monkeypatch, client):
     """Trigger unexpected exception in /divide to hit Exception block."""
     import main
@@ -213,7 +199,6 @@ def test_divide_unexpected_exception(monkeypatch, client):
     def bad_divide(a, b):
         raise RuntimeError("Unexpected math error")
 
-    # Patch divide() to force an unexpected runtime exception
     monkeypatch.setattr(main, "divide", bad_divide)
 
     res = client.post("/divide", json={"a": 4, "b": 2})

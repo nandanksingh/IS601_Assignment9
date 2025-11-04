@@ -1,15 +1,17 @@
 # ----------------------------------------------------------
 # Author: Nandan Kumar
-# Date: 10/27/2025
-# Assignment-8: FastAPI Calculator
+# Date: 11/03/2025
+# Assignment-9: Working with Raw SQL in pgAdmin
 # File: tests/conftest.py
 # ----------------------------------------------------------
 # Description:
 # Provides reusable pytest fixtures for end-to-end (E2E)
-# testing of the FastAPI Calculator web application.
+# testing of the FastAPI + PostgreSQL application.
 # Automatically starts the FastAPI server, initializes a
 # headless Playwright browser, and ensures all resources
 # are cleanly closed after testing.
+# This setup validates both the API layer and database
+# connectivity within the Docker Compose environment.
 # ----------------------------------------------------------
 
 import subprocess
@@ -27,10 +29,11 @@ def fastapi_server():
     """
     Start the FastAPI app before running E2E tests
     and stop it after all tests finish.
+    Ensures the FastAPI + PostgreSQL integration works correctly.
     """
     print("\n🚀 Starting FastAPI server for E2E tests...")
     server = subprocess.Popen(["python", "main.py"])
-    url = "http://127.0.0.1:8000/"
+    url = "http://127.0.0.1:8000/health"
     started = False
 
     # Wait for the server to become responsive
@@ -38,7 +41,7 @@ def fastapi_server():
         try:
             if requests.get(url).status_code == 200:
                 started = True
-                print("✅ FastAPI server is running.")
+                print("✅ FastAPI server is running and healthy.")
                 break
         except requests.exceptions.ConnectionError:
             pass
