@@ -5,13 +5,12 @@
 # File: tests/integration/test_fastapi_calculator.py
 # ----------------------------------------------------------
 # Description:
-# Integration tests for FastAPI Calculator endpoints.
+# Integration tests for FastAPI + PostgreSQL project endpoints.
 # These tests verify API routes (/add, /subtract, /multiply, /divide)
 # return correct JSON responses and handle invalid inputs gracefully.
 #
-# In this assignment, these routes simulate the API layer that could
-# later be connected to a PostgreSQL database (via Docker Compose)
-# for logging and relational data operations.
+# The /health endpoint ensures that the FastAPI–PostgreSQL service
+# stack is running successfully inside the Docker Compose environment.
 # ----------------------------------------------------------
 
 import pytest
@@ -99,16 +98,16 @@ def test_invalid_type_triggers_typeerror(client, endpoint, payload):
 # Health Check Endpoint
 # ----------------------------------------------------------
 def test_health_endpoint(client):
-    """Ensure /health endpoint responds correctly."""
+    """Ensure /health endpoint responds correctly in Assignment 9 context."""
     res = client.get("/health")
     assert res.status_code == 200
     data = res.json()
     assert data["status"].lower() == "ok"
-    assert "FastAPI Calculator" in data["message"]
+    assert "FastAPI + PostgreSQL" in data["message"]  # Updated message check
 
 
 # ----------------------------------------------------------
-# Coverage Tests
+# Coverage Tests and Exception Handling
 # ----------------------------------------------------------
 def test_generic_add_error_handling(monkeypatch, client):
     """Force add() to raise an exception to cover the /add route error block."""
